@@ -26,7 +26,7 @@
 ;;; https://docs.racket-lang.org/reference/reader.html#%28part._parse-symbol%29
 ;;; https://gist.github.com/matthewp/2324447
 ;;; https://www.scheme.com/tspl3/binding.html#./binding:h1
-;;; 
+;;; https://en.wikibooks.org/wiki/Scheme_Programming/Looping
 
 
 ; splits txt file into characters
