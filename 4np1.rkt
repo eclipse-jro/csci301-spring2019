@@ -52,7 +52,7 @@
 (split 0 0))))
 
 
-(file->char_list "range.txt")
+;;;;;;;;;(file->char_list "range.txt")
 ;(apply string(file->char_list "range.txt"))
 
 ;(let* ([data-noNewLine (str-split (apply string(file->char_list "range.txt")) #\newline)]
@@ -103,40 +103,16 @@
       [(= (length ls) (- (first ls) 3)) sameNumList]
       [else (makeSameNumList sameNumList)])))
 
-(define primes '())
-
-;(define (returnPrimes rangeList)
-;  (let ([primeTmp '()])
-;    (for-each (lambda (element)
-;                (cond
-;                 [(isPrime? element) (append primeTmp (list element))])
-;                99)
-;              rangeList)
-;    primeTmp))
-
-
-;; Needs work
-(define (givePrimes rangeList)
-  (for-each (lambda (arg)
-              (cond
-                [(isPrime? arg) (let ([primes (append primes (list arg))])
-                                  (givePrimes (rest rangeList)))]
-                [else givePrimes (rest rangeList)]
-              )
-            rangeList))
-  primes)
+;; Returns a list of primes from a list of integers
+(define (primes rangeList)
+  (filter isPrime? rangeList))
   
-               
-
-  
-
-;;; STAGE 3:
-
-
-               ;;; (for-each (lambda (arg)
-             ;;;  (printf "Got ~a\n" arg)
-              ;;; 23) '(5 4 3 2))
-
-;(for-each (lambda (element)
-;                (cond
-;                 [(isPrime? element) (append (primes) (list element))]) '(5 6 7)))
+;;; STAGE 3: Take the primes produced by the function in stage 2 and determine the two squares
+;;;          that sum to the prime of the form '4n + 1"
+;;; NEEDS WORK
+(define (squareNum-Sum? num)
+  (define (sum-help h)
+    (cond [(= h num) #f]
+          [(= num (+ (* (floor(sqrt h)) (floor (sqrt h)))
+                     (* (floor (sqrt (- num h))) (floor (sqrt (- num h))))  )) #t]
+          )))
