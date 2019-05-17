@@ -71,17 +71,72 @@
 (define (append ls ls2)
  (if (null? ls) ls2
   (cons (car ls) (append (cdr ls) ls2))))
-
-;;; ls is initally a list of only the lowbound
+; returns list of values in specified range
+; ls is initally a list of only the lowbound
 (define (xy_range_equation ls lowBound highBound)
   (let ([curList (append ls (cons (+ (first (reverse ls)) 1) '()))])
   (cond
     [(= (length curList) (+ (- highBound lowBound) 1)) curList]
+    [(< highBound lowBound) (error "InputError: highBound must be greater than lowBound")]
+    [(= highBound lowBound) (list(first curList))]
     [else (xy_range_equation curList lowBound highBound)])))
+
+;;; STAGE 2: Call the function from stage 1 and return to ones that are primes
+        ;map might be useful here
+;Call the function from stage 1 and return to ones that are primes
+
+; 3 helper functions to determine if a number is prime
+(define (isPrime? num)
+  (cond
+    [(<= num 1) #f]
+    [(or (= num 2) (= num 3)) #t]
+    [else (andmap magicMath (xy_range_equation '(2) 2 (- num 1)) (makeSameNumList (list num)))]))
+; checks factors
+(define (magicMath factor maybePrime)
+  (cond
+    [(= (modulo maybePrime factor) 0) #f]
+    [else #t]))
+; utility function to iterate through andmap lists
+(define (makeSameNumList ls)
+  (let ([sameNumList (append ls (list (first ls)))])
+    (cond
+      [(= (length ls) (- (first ls) 3)) sameNumList]
+      [else (makeSameNumList sameNumList)])))
+
+(define primes '())
+
+;(define (returnPrimes rangeList)
+;  (let ([primeTmp '()])
+;    (for-each (lambda (element)
+;                (cond
+;                 [(isPrime? element) (append primeTmp (list element))])
+;                99)
+;              rangeList)
+;    primeTmp))
+
+
+;; Needs work
+(define (givePrimes rangeList)
+  (for-each (lambda (arg)
+              (cond
+                [(isPrime? arg) (let ([primes (append primes (list arg))])
+                                  (givePrimes (rest rangeList)))]
+                [else givePrimes (rest rangeList)]
+              )
+            rangeList))
+  primes)
+  
+               
+
   
 
-;;; STAGE 2:
-        ;map might be useful here
-
-
 ;;; STAGE 3:
+
+
+               ;;; (for-each (lambda (arg)
+             ;;;  (printf "Got ~a\n" arg)
+              ;;; 23) '(5 4 3 2))
+
+;(for-each (lambda (element)
+;                (cond
+;                 [(isPrime? element) (append (primes) (list element))]) '(5 6 7)))
