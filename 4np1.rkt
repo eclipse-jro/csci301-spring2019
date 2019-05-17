@@ -28,7 +28,6 @@
 ;;; https://www.scheme.com/tspl3/binding.html#./binding:h1
 ;;; https://en.wikibooks.org/wiki/Scheme_Programming/Looping
 
-
 ; splits txt file into characters
 (define (file->char_list path)
  (call-with-input-file path
@@ -56,9 +55,9 @@
 (file->char_list "range.txt")
 ;(apply string(file->char_list "range.txt"))
 
-(let* ([data-noNewLine (str-split (apply string(file->char_list "range.txt")) #\newline)]
-       [data-result (str-split data-noNewLine #\space)])
-  data-result)
+;(let* ([data-noNewLine (str-split (apply string(file->char_list "range.txt")) #\newline)]
+;       [data-result (str-split data-noNewLine #\space)])
+;  data-result)
 
 
 ;(data-noNewLine)
@@ -68,9 +67,18 @@
 
 
 ;;; STAGE 1: function that prints vals for a range x -> y
-(define xy_range_equation
-  (lambda (lower upper)
-    (do 
+; Helper function to append two lists
+(define (append ls ls2)
+ (if (null? ls) ls2
+  (cons (car ls) (append (cdr ls) ls2))))
+
+;;; ls is initally a list of only the lowbound
+(define (xy_range_equation ls lowBound highBound)
+  (let ([curList (append ls (cons (+ (first (reverse ls)) 1) '()))])
+  (cond
+    [(= (length curList) (+ (- highBound lowBound) 1)) curList]
+    [else (xy_range_equation curList lowBound highBound)])))
+  
 
 ;;; STAGE 2:
         ;map might be useful here
