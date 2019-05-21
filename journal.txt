@@ -1,0 +1,558 @@
+Journal for CSCI301 and all exercises :
+Purposes:
+		i)	Summarize a point being made in the text for study notes.
+		ii)	Record worked out solutions to ALL the exercises in the text.
+		iii)	Record questions you have to return to in order to try to find the answers.
+__________________________________________________________________________________________________________________________
+
+I. Chapter One -- Introduction
+	A. Section 1.1 -- Scheme Syntax
+		- Identifiers cannot start with "@" or look like a number; NOT case sensitive.
+		- Structured forms and list constancts are made with "()" ; sometimes we use "[]" too for readability.
+		- #t and #f are the boolean values true and false. In scheme only #f is false ALL other objects are true.
+		- Vectors are denoted: #(this is a vector of symbols)
+		- String: "I am a string"
+		- Char (case sensitive): #\a
+		- Numbers can be ints , ratios, floating-point, scientific notation, or as complex numbers in rectangular or polar notation.
+		- Comments: for a single procedure one comment on the same indent level; for multiple don't use the same level and denote this by ";;;"
+	B. Section 1.2 -- Scheme Naming Conventions
+		- Predicates are procedures that return true or false. ex: "eq?" (= < > =< => are exceptions)
+		- Type predicates come from the name, like eq in the line above.
+		- character, string, and vector procedures start with that in the name, eg: string-append
+		- Casting is denoted: type1->type2 eg: vector->list
+		- Procedures and syntactic forms that cause side effects are denoted: set! or vector-set!
+	C. Section 1.3 -- Typographical and Notational Conventions
+	
+II. Chapter Two -- Getting Started
+	A. Section 2.1 -- interacting with Scheme
+		- REPL: read evaluate print loop (simple interaction in scheme)
+		- You can use transcript-on or transcript-off if you need to save results for later use.
+		- All structured forms are enclosed in () and written in prefix notation, eg: (* 3 5) is 3 * 5.
+	B. Section 2.2 -- Simple Expressions
+		- Constant data objects; string, symbols, numbers, and lists.
+		- Procedure applications are were the application of a procedure is specified with arguments.
+		- The list is the basic aggregate structure in scheme; it can have different types of elements/objects.
+		- We use "quote" (or ') to tell scheme that something is a list and not a procedure application
+		- The cdr of the last pair in a proper list is the empty list. Otherwise, the sequence of pairs forms an improper list.
+			More formally, the empty list is a proper list, and any pair whose cdr is a proper list is a proper list.
+		- cons constructs a list, car returns the first element in a list, cdr returns everything after the first element in list,
+			and finally list creats a proper list.
+			
+		i.		Exercise 2.2.1:
+				> (+ (* 1.2(- 2 1/3))-8.7)
+				-6.699999999999999
+				> (/ (+ 2/3 4/9) (- 5/11 4/3))
+				-1 23/87
+				> (+ 1 (/ 1 (+ 2 (/ 1 (+ 1 1/2)))))
+				1 3/8
+				> (* 7 (* -6 (* 5 (* -4 (* 3 (* 1 -2))))))
+				-5040
+	
+		ii.		Exercise 2.2.2:
+				> (+ 0 1/2)
+				1/2
+				> (+ 0.0 1)
+				1.0
+				> (+ 1 2)
+				3
+				> (* 3 1/2)
+				  (* 3.0 1)
+				  (* 7 2)
+				1 1/2
+				3.0
+				14
+				> (/ 3 1/2)
+				  (/ 3.0 1)
+				  (/ 7 2)
+				6
+				3.0
+				3 1/2
+				> (- 3 1/2)
+				  (- 3.0 1)
+				  (- 7 2)
+				2 1/2
+				2.0
+				5
+		iii.	Exercise 2.2.3:
+				> (cons 'car 'cdr)
+				(car . cdr)
+				> (list 'this '(is silly))
+				'(this (is silly))
+				> (cons 'is '(this silly?))
+				'(is this silly?)
+				> (quote (+ 2 3))
+				'(+ 2 3)
+				> (cons '+ '(2 3))
+				'(+ 2 3)
+				> (car '(+ 2 3))
+				'+
+				> (cdr '(+ 2 3))
+				'(2 3)
+				> cons
+				#<procedure:cons>
+				> (quote cons)
+				'cons
+				> (quote (quote cons))
+				''cons
+				> (car (quote (quote cons)))
+				'quote
+				> (+ 2 3)
+				5
+				> (+ '2 '3)
+				5
+				> (+ (car '(2 3)) (car (cdr '(2 3))))
+				5
+				> ((car (list + - * /)) 2 3)
+		iv.		Exercise 2.2.4:
+				> (car (car '((a b) (c d))))
+				'a
+				> (car (cdr (car '((a b) (c d)))))
+				'b
+				> (car (car (cdr '((a b) (c d)))))
+				'c
+				> (car (cdr (car (cdr '((a b) (c d))))))
+				'd
+		v.		Exercise 2.2.5:
+				'((a . b) ((c) d) ())
+		vi.		Exercise 2.2.6:
+				The first pair is (1,pointer), which points to two a pair of (pointer, pointer).
+					The first pointer here, points to (2,pointer), which points to (pointer, ()), the pointer in that points to (3,()).
+					The second pointer here, points to (pointer, pointer), where the first pointer is ((),()) and the second (4,5).
+		vii.	Exercise 2.2.7:
+				> (car '((a b) (c d)))
+				'(a b)
+				> (car (car '((a b) (c d))))
+				'a
+				> (cdr '((a b) (c d)))
+				'((c d))
+				> (cdr (cdr '((a b) (c d))))
+				'()
+				> (car (cdr '((a b) (c d))))
+				'(c d)
+				> (car (car (cdr '((a b) (c d)))))
+				'c
+				> (car (car (car (cdr '((a b) (c d))))))
+				> (cdr (car '((a b) (c d))))
+				'(b)
+				> (car (cdr (car '((a b) (c d)))))
+				'b
+				> (cdr (car (cdr '((a b) (c d)))))
+				'(d)
+				> (car (cdr (car (cdr '((a b) (c d))))))
+				'd
+				> (cdr (cdr (car (cdr '((a b) (c d))))))
+				'()
+				> (cdr (cdr (car '((a b) (c d)))))
+				' ()
+		viii.	Exercise 2.2.8:
+				Scheme expressions are evaluated in prefix notation.
+				car, cdr, cons are similar to the operators -,+,*,/ in how it is
+				read and executed.
+	C. Section 2.3 -- Evaluating Scheme Expressions
+		- Constant objects, procedure applications, and quote expressions are only three of the many syntactic forms provided by Scheme.
+		- Procedure is evaluated before arg1, arg1 is evaluated before arg2, and so on. This need not be the case.
+			A Scheme evaluator is free to evaluate the expressions in any order---left to right, right to left, or any other sequential order.
+		i.		Exercise 2.3.1: Evaluating ((car (cdr (list + - * /))) 17 5)
+				One: Use the list procedure with the arguments +,-,*,/ for a return object that is a list of these arguments.
+				Two: Use the cdr procedure on the list argument '(+ - * /) returning the object that is a list: '(- * /)
+				Three: Use the car procedure on the list '(- * /) returning the object -
+				Four: Use the subtraction procedure (-) on arguments 17 and 5, returning the object of value 12.
+	D. Section 2.4 -- Variables and let Expressions
+		- The general form of a let expression is	(let ((var val) ...) exp1 exp2 ...)
+			We refer to variables bound by let as let-bound variables.
+		- The variables bound by let are visible only within the body of the let.
+		- When nested let expressions bind the same variable, only the binding created by the inner let is visible within its body.
+		- Although choosing different names can sometimes prevent confusion, shadowing can help prevent the accidental use of an "old" value.
+		i.		Exercise 2.4.1: (+ (- (* 3 a) b) (+ (* 3 a) b)) && (cons (car (list a b c)) (cdr (list a b c)))
+				(let ((x (* 3 a)))
+					(+ (- (x) b) (+ (x) b)))
+					
+				(let ((x (list a b c)))
+					(cons (car x) (cdr x)))
+		ii.		Exercise 2.4.2: 
+				The answer is 54, in the first let level x is 9, so we have (* 9 something), that something comes from the shadow of x;
+				in the second let level the let binding is to x, using the first let-binding of x, 9/3 is 3 so the "new-x" or the shadow
+				of x is now 3. Within the second let level, we have the expression (+ x x) which equates to 6 or the "something" mentioned earlier.
+				Thus, we have (* 9 6) which equates to 54.
+		iii.	Exercise 2.4.3:
+				(let ((x 'a) (y 'b))
+				  (list (let ((new-x 'c)) (cons new-x y))
+						(let ((new-y 'd)) (cons x new-y))))
+						
+				> (let ((x '((a b) c)))
+			  (cons (let ((new-x (cdr x)))
+					  (car new-x))
+					(let ((newer-x (car x)))
+					  (cons (let ((evenNewer-x (cdr newer-x)))
+							  (car evenNewer-x))
+							(cons (let ((newest-x (car newer-x)))
+									newest-x)
+								  (cdr newer-x))))))
+				'(c b a b)
+
+	E. Section 2.5 -- Lambda Expressions:
+		- The general form of a lambda expression is	(lambda (var ...) exp1 exp2 ...)
+		- A procedure is just as much an object as a number, string, symbol, or pair.
+		- Procedures may accept more than one argument and that arguments passed to a procedure may themselves be procedures.
+		- (let ((x 'a)) (cons x x)) ≡ ((lambda (x) (cons x x)) 'a)
+		- In fact, a let expression is a syntactic extension defined in terms of lambda and procedure application, which are both core syntactic forms.
+			In general, any expression of the form	(let ((var val) ...) exp1 exp2 ...)	is equivalent to the following.
+				((lambda (var ...) exp1 exp2 ...)
+				 val ...)
+		- The formal parameter specification can be in any of the following three forms.
+			One: a proper list of variables, (var1 ... varn), such as we have already seen,
+			Two: a single variable, varr, or
+			Three: an improper list of variables, (var1 ... varn . varr).
+				In the second and third cases, varr is sometimes referred to as a "rest" parameter because it holds the rest of the actual parameters
+				beyond those that are individually named.
+		i.		Exercise 2.5.1:
+				> (let ((f (lambda (x) x)))
+				(f 'a))
+				'a
+				> (let ((f (lambda x x)))
+				(f 'a))
+				'(a)
+				> (let ((f (lambda (x . y) x)))
+				(f 'a))
+				'a
+				(let ((f (lambda (x . y) y)))
+				(f 'a))
+		ii.		Exercise 2.5.2:
+				(define list (lambda x x))
+		iii.	Exercise 2.5.3:
+				a: none
+				b: +
+				c: f
+				d: cons,f,y
+				e: cons and y
+				f: z,y, and cons 
+	F. Section 2.6 -- Top-Level Definitions
+		- Procedures are not intimately tied to variables, or names, as they are in many other languages. This syntax is often referred to,
+			somewhat pejoratively, as the "defun" syntax for define, after the defun form provided by Lisp languages in which procedures
+			are more closely tied to their names.
+		- When you define proc1, the system accepts your promise to define proc2, and does not complain unless you use proc1 before defining proc2.
+			This allows you to define procedures in any order you please. This is especially useful when you are trying to organize a file full
+			of procedure definitions in a way that makes your program more readable. It is necessary when two procedures defined at top level depend upon each other.
+		i.		Exercise 2.6.1:
+				The number of arguments required would be satisfied but you would be stuck in an infinite loop where you just keep doubling the double-any procedure.
+		ii.		Exercise 2.6.2:
+				(define compose
+				  (lambda (p1 p2)
+					(lambda (x)
+					  (p1 (p2 x))))) 
+
+				(define cadr (compose car cdr))
+				(define cddr (compose cdr cdr))
+		iii.	Exercise 2.6.3:
+				(define cadr (compose car cdr)) 
+				(define cdar (compose cdr car))
+				(define caar (compose car car))
+				(define cddr (compose cdr cdr))
+				(define caadr (compose car cadr))
+				(define cadar (compose car cdar))
+				(define caaar (compose car caar))
+				(define caddr (compose car cddr)) 
+				(define cdddr (compose cdr cddr)) 
+				(define cdadr (compose cdr cadr))
+				(define cdaar (compose cdr caar))
+				(define cddar (compose cdr cdar))
+				(define caaadr (compose caar cadr))
+				(define caadar (compose caar cdar))
+				(define caaaar (compose caar caar))
+				(define cadaar (compose cadr caar))
+				(define cadadr (compose cadr cadr))
+				(define caaddr (compose caar cddr))
+				(define caddar (compose cadr cdar))
+				(define cadddr (compose cadr cddr))
+				(define cddadr (compose cddr cadr))
+				(define cdddar (compose cddr cdar))
+				(define cddddr (compose cddr cddr))
+				(define cdadar (compose cdar cdar))
+				(define cdaddr (compose cdar cddr))
+				(define cdaaar (compose cdar caar))
+				(define cdaadr (compose cdar cadr))
+				(define cddaar (compose cddr caar))
+	G. Section 2.7 -- Conditional Expressions
+		- An if expression has the form (if test consequent alternative)
+		- Only #f is considered false; all other objects are considered true.
+		- The procedures =, <, >, <=, and >= are called predicates
+		- It is an error to pass the procedure cdr anything other than a pair, and most implementations signal an error when this happens.
+			Common Lisp, however, defines (cdr '()) to be ().
+		- Another useful predicate is eqv?, which requires two arguments. If the two arguments are equivalent, eqv? returns true. Otherwise, eqv? returns false.
+		- Type predicates return true or false depending on the type of the object, e.g., pair?, symbol?, number?, and string?
+		i.		Exercise 2.7.1
+				(define atom?
+				  (lambda (x)
+					(not (pair? x))))
+		ii.		Exercise 2.7.2
+				(define shorter
+				  (lambda (ls1 ls2)
+					(if (< (length ls2) (length ls1))
+						ls2
+						ls1)))
+	H. Section 2.8 -- Simple Recursion
+		- A recursive procedure is a procedure that applies itself.
+		- Most recursive procedures should have at least two basic elements, a base case and a recursion step.
+		- Most Scheme implementations allow you to trace the execution of a procedure to see how it operates.
+			In Chez Scheme, for example, one way to trace a procedure is to type (trace name),
+			where name is the name of a procedure you have defined at top level.
+		- There is no reason why there cannot be more than one base case.
+		- while or for loops, may wonder whether similar constructs are required in Scheme.
+			Such constructs are unnecessary; iteration in Scheme is expressed more clearly and succinctly via recursion.
+		- Mapping: This procedure forms a new list from the input list by applying the procedure abs to each element.
+		i.		Exercise 2.8.1:
+				The output is the input reversed.
+		ii.		Exercise 2.8.2:
+				(define append
+				  (lambda (list1 list2)
+					(if (null? list1)
+						list2
+						(cons (car list1) (append (cdr list1) list2)))))
+		iii.	Exercise 2.8.3:
+				(define make-list
+				  (lambda (n x)
+					(if (= n 0)
+						'()
+						(cons x (make-list (- n 1) x)))))
+		iv.		Exercise 2.8.4:
+				(define list-ref
+				  (lambda (list n)
+					(if (= n 0)
+						(car list)
+						(list-ref (cdr list) (- n 1)))))
+				(define list-tail
+				  (lambda (list n)
+					(if (= n 0)
+						list
+						(list-tail (cdr list) (- n 1))))) 
+		v.		Exercise 2.8.5:
+				(define shorter?
+				  (lambda (list1 list2)
+					(and (not (null? list2))
+						 (or (null? list1)
+							 (shorter? (cdr list1) (cdr list2)))))) 
+
+				(define shorter
+				  (lambda (list1 list2)
+					(if (shorter? list2 list1)
+						list2
+						list1)))
+		vi.		Exercise 2.8.6:
+				(define even?
+				  (lambda (x)
+					(or (= x 0)
+						(odd? (- x 1)))))
+				(define odd?
+				  (lambda (x)
+					(and (not (= x 0))
+						 (even? (- x 1)))))
+		vii.	Exercise 2.8.7:
+				(define transpose
+				  (lambda (list)
+					(cons (map car list) (map cdr list))))
+	I. Section  2.9 -- Assignment
+		- Most of the assignments that are either necessary or convenient in other languages are both unnecessary and inconvenient in Scheme,
+			since there is typically a clearer way to express the same algorithm without assignments.
+		- Assignments are commonly used to implement procedures that must maintain some internal state.
+		- Variables must be defined before they can be assigned, so we define shhh and tell to be #f initially.
+		- A tconc consists of a nonempty list and a header. The header is a pair whose car points to the first pair (head) of the list
+			and whose cdr points to the last pair (end) of the list.
+		- 
+		i.		Exercise 2.9.1:
+				(define make-counter
+				  (lambda (init incr)
+					(let ((next init))
+					  (lambda ()
+						(let ((v next))
+						  (set! next (+ next incr))
+						  v)))))
+		ii.		Exercise 2.9.2:
+				(define make-stack
+				  (lambda ()
+					(let ((list '()))
+					  (lambda (msg . args)
+						(case msg
+						  ((empty? mt?) (null? list))
+						  ((push!) (set! list (cons (car args) ls)))
+						  ((top) (car list))
+						  ((pop!) (set! list (cdr list)))
+						  (else "error"))))))
+		iii.	Exercise 2.9.3:
+				(define make-stack
+				  (lambda ()
+					(let ((list '()))
+					  (lambda (msg . args)
+						(case msg
+						  ((empty? mt?) (null? list))
+						  ((push!) (set! list (cons (car args) ls)))
+						  ((top) (car list))
+						  ((pop!) (set! list (cdr list)))
+						  ((ref) (list-ref list (car args)))
+						  ((set!) (set-car! (list-tail list (car args)) (cadr args)))
+						  (else "error"))))))
+		iv.		Exercise 2.9.4:
+				(define make-stack
+				  (lambda (n)
+					(let ((v (make-vector n)) (i -1))
+					  (lambda (msg . args)
+						(case msg
+						  ((empty? mt?) (= i -1))
+						  ((push!)
+						   (set! i (+ i 1))
+						   (vector-set! v i (car args)))
+						  ((top) (vector-ref v i))
+						  ((pop!) (set! i (- i 1)))
+						  ((ref) (vector-ref v (- i (car args))))
+						  ((set!) (vector-set! v (- i (car args)) (cadr args)))
+						  (else "error"))))))
+		v.		Exercise 2.9.5:
+				(define emptyq?
+				  (lambda (q)
+					(eq? (car q) (cdr q)))) 
+				(define getq
+				  (lambda (q)
+					(if (emptyq? q)
+						(error 'getq "the queue is empty")
+						(car (car q))))) 
+				(define delq!
+				  (lambda (q)
+					(if (emptyq? q)
+						(error 'delq! "the queue is empty")
+						(set-car! q (cdr (car q))))))
+		vi.		Exercise 2.9.6:
+				(define make-queue
+				  (lambda ()
+					(cons '() '()))) 
+				(define putq!
+				  (lambda (q v)
+					(let ((p (cons v '())))
+					  (if (null? (car q))
+						  (begin
+							(set-car! q p)
+							(set-cdr! q p))
+						  (begin
+							(set-cdr! (cdr q) p)
+							(set-cdr! q p)))))) 
+				(define getq
+				  (lambda (q)
+					(car (car q)))) 
+				(define delq!
+				  (lambda (q)
+					(if (eq? (car q) (cdr q))
+						(begin
+						  (set-car! q '())
+						  (set-cdr! q '()))
+						(set-car! q (cdr (car q))))))
+		vii.	Exercise 2.9.7:
+				Yes, the implmentation on pg. 40 will be stuck in an infinite loop, the built in length primitive stops this.
+		ix.		Exercise 2.9.8:
+				(define race
+				  (lambda (hare tortoise)
+					(if (pair? hare)
+						(let ((hare (cdr hare)))
+						  (if (pair? hare)
+							  (and (not (eq? hare tortoise))
+								   (race (cdr hare) (cdr tortoise)))
+							  (null? hare)))
+						(null? hare)))) 
+				(define list?
+				  (lambda (x)
+					(race x x)))
+
+I. Chapter Five -- Control Operations
+        A. Section 5.1 -- Procedure Application
+                i.      "Apply" invokes "prodecure", which is called with as many arguments as there are objs plus elements of list.
+			-	Proceudre: (apply procedure obj ... list)
+        B. Section 5.2 -- Sequencing
+                i.      Syntax: (begin exp1 exp2) ; returns the result of the lasat expression
+				ii.		The bodies of lambda, let, let*, and letrec, as wekk as the result clausese of cond, case, and do, are treated
+						as if they were inside an implicit begin. (The expressions are executed in sequence).
+        C. Section 5.3 -- Condintionals
+                i.      Syntax: (if test consequent alternative) or (if test consequent) ; returns the values of consequent or alternative
+						depending on the value of test.
+				ii.		test, consequent, and alternative are exps, if no alternative exists and test is #f, the result is unspecified.
+				iii.	Procedure: (not obj) ; returns #t if obj is false, #f otherwise
+				iv.		Procedure: (and exp ...) ; evaluates subexpressions in sequence and stops if any exp evaluates to false.
+						The value of the last expression is returned.
+ 				v.		Syntax: (or exp ...) ; Evaluates subexpressions in sequence and stops immediately if any value evaluates to true.
+						The value of the last expression is returned.
+				vi.		Syntax: (cond claues1 clause2) ; each clause is evaluated in order until one returns true, or if all evaluated.
+				vii.	Syntax: (case exp0 clause1 clause2) ;
+				vii.	Each cluse but the last muist take the form: ((key ...) exp1 exp2 ...)
+						where each key is a datum distinct from the other keys; there can be an else instead of a key in the lasta clause.
+						Exp0 is evaluated and compared (using eqv?) against all keys. If there is a match then the value of the last
+						expression is returned.
+        D. Section 5.4 -- Recursion, Iteration, and Mapping
+                i.      Syntax: (let name ((var val) ...) exp1 exp2 ...) ; returns value of the last expression
+						Named let is a general purpose iteration and recusion construct. The var name is bound within the body to a 
+						producure that may be called to recur or iterate.
+				ii.		Syntax: (do ((var val update) ...) (test res ...) exp ...) ; returns the value of the last res.
+						Do allows a common restricted form of iteration to be expressed succinctly. Var is initally bound to val, and 
+						are rebound on each subsequent iteration to the values of update. The expressions test, update ..., exp ..., 
+						and res ... are all within the scope of the bindings established for var.
+						Iteration continues until the evaluations of test is true.
+				iii.	Procedure: (map procedure list1 list2) ; returns list of results
+						Map applies procedure to corresponding elements of the lists list1, list2, ... and returns a list of results.
+						The lists must be of the same lenght, and procedure must apply as many args as there are lists.
+						Map does not do any error checking.
+				iv.		Procedure: (for-each procedure list1 list2 ...)
+						Similar to map but does not create and return a list of the resulting values, and it garuntees to perform
+						applications in sequence over the lists from left to right.
+        E. Section 5.5 -- Continuations
+                i.      Continuations in scheme are procedures that represent the remainder of a computation from a given point
+						Obtained with call-with-current-continuation (call/cc in many Scheme implementations).
+				ii.		Procedure: (call-with-current-continuation procedure) ; returnsresult of applying procedure to current continuation.
+				iii.	The continuation itself is represented by a procedure of one argument. Continuations allow the implmentation of
+						nonlocal exits, becktraking, coroutines, and multitasking.
+				iv.		The current continuation is typically a stack of procedure activation records, obtaining it involves encapsulating
+						the stack within a procedureal object.
+				v.		Procedure: (dynamic-wind in body out) ; returns result of applying body
+						dynamic-wind offers protection from continuation invocation; in, body, out must be procedures of no arguments.
+						It is garunteed that in is invoked at least once. If body ever returns, out is invoked at least once.
+				vi.		Some scheme implmentations have fluid-let where a var takes on a temporary value during a given computation and
+						reverts ti the old value after the computation has completed. If control has left a fluid-let body, and control
+						reenters the boyd of invocation of a continuation, the temp. value of the var is reinstated.
+				vii.	dynamic-wind and call/cc manage a list of winders. A winder is a pair of in and out thunks (no arg procedures)
+						established by a call to dynamic-wind. Whenever dynamic-wind is invoked, the in thunk is invoked, a new winder
+						containing the in and out thunks is placed on the winders list, the body thunk is invoked, the winder is
+						removed from the winders list, and the out thunk is invoked.
+	F. Section 5.6 -- Delayed Evaluation
+                i.      delay and force may be used to make lazy. Lazy doesn't evaluate an expression until the value is required, then
+						only evaluates it once.
+				ii.		Syntax: (delay exp) ; returns a promise
+						The 1st time the promise is forced (with force), the remembers the eval of exp. Thus, returning this when forced.
+				iii.	Procedure: (force promise) ; returns result of forcing promise
+				iv.		With this definition of delay, force simply invokes the promise to force evaluation or to retrieve the saved value;
+						(define force
+							(lambda (promise)
+								(promise)))
+	G. Section 5.7 -- Multiple Values
+                i.      The built in multiple-values interface consists of two procedures: values and call-with-values. Values produces
+						multiple values and call-with-values links procedures that produce multipl-value values with procedures that
+						consume them.
+				ii.		Proceudre: (values obj ...)
+						This procedure accepts any number of args and returns the arguments to its continuation.
+						Can be used to pass any number of values of a contuniation that ignores the values, e.g. :
+						(begin (values 1 2 3) 4) --> 4
+				iii.	Procedure: (call-with-values producer consumer)
+						producer and consumer must be procedures. Call-with-values apllies consumer to the values returnedd by invoking
+						producer without any arguments.
+						There is no error passing.
+				iv.		Other operators that are coded similarly to pass along multiple return values include: call-with-input-file, 
+						call-with-output-file, with-input-from-file, with-output-from-file, and dynamic-wind.
+				v.		Programs that wish to force extra values to be ignored can do so by calling call-with-values explicitly. e.g. :
+						(define syntax-first
+							(syntax-rules ()
+								((_ expr)
+									(call-with-values
+									(lambda () expr)
+									(lambda (x . y) x)))))
+						(if (first (values #t #f)) 'a 'b)  --> a
+	H. Section 5.8 -- Eval
+                i.		The eval procedure allows programmers to write programs that construct and evaluate other programs. The ability
+						to do meta programming should not be overused but is extremely handy when needed.
+                ii.		Procedure: (eval obj env-spec) ; returns value of the Scheme form represented by obj
+						env-spec must be an enviornmnet specifier returned by interaction-environment, scheme-report-environment, or
+						null-environment. Eval evaluates the xp in the specified enviromnet and returns its value.
+				iii.	Procedures: (scheme-report-environment version) and (null-environment version) ; return an empty specifer.
+				iv.		Procedure: (interaction-environment) ; returns an environment specifier.
