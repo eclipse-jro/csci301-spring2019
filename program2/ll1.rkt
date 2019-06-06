@@ -7,8 +7,18 @@
 ; inputStackTokens (read, A, read, B, C, :=, A, +, B, D)
 ; parseStack = (program)
 
+; 
 (define program-table
-  '(1 0 1 1 0 0 0 0 0 0 0 1))
+  (let ((return "ERROR"))
+    (lambda (x)
+      (cond
+        ;((id? x) (let ((return "1"))  return))
+        ((string=? "read" x) (let ((return "1"))  return))
+        ((string=? "write" x) (let ((return "1"))  return))
+        ((string=? "$$" x) (let ((return "1"))  return))
+        (else return)
+        ))))
+
 (define stmt_list-table
   '(2 0 2 2 0 0 0 0 0 0 0 3))
 (define stmt-table
@@ -28,4 +38,6 @@
 (define mult_op-table
   '(0 0 0 0 0 0 0 0 0 18 19 0))
 
-(cons (cons program-table stmt_list-table) stmt-table)
+; (cons (cons program-table stmt_list-table) stmt-table)
+(program-table "poke")
+
