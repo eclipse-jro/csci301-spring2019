@@ -1,7 +1,4 @@
-; inputStackTokens (read, A, read, B, C, :=, A, +, B, D)
-; parseStack = ("program")
-
-
+; Define all ids in this language
 (define id?
   (let ((bool #f))
     (lambda (x)
@@ -15,37 +12,110 @@
         ((or (string=? "Y" x) (string=? "Z" x)) (let ((bool #t)) bool))
         (else bool)
         ))))
-
+; Define associated row-column intersections for input token and top-of-stack non-terminal
 (define program-table
   (let ((return "ERROR"))
     (lambda (x)
       (cond
-        ;((id? x) (let ((return "1"))  return))
+        ((id? x) (let ((return "1"))  return))
         ((string=? "read" x) (let ((return "1"))  return))
         ((string=? "write" x) (let ((return "1"))  return))
         ((string=? "$$" x) (let ((return "1"))  return))
         (else return)
         ))))
 (define stmt_list-table
-  '(2 0 2 2 0 0 0 0 0 0 0 3))
+  (let ((return "ERROR"))
+    (lambda (x)
+      (cond
+        ((id? x) (let ((return "2"))  return))
+        ((string=? "read" x) (let ((return "2"))  return))
+        ((string=? "write" x) (let ((return "2"))  return))
+        ((string=? "$$" x) (let ((return "3"))  return))
+        (else return)
+        ))))
 (define stmt-table
-  '(4 0 5 6 0 0 0 0 0 0 0 0))
+  (let ((return "ERROR"))
+    (lambda (x)
+      (cond
+        ((id? x) (let ((return "4"))  return))
+        ((string=? "read" x) (let ((return "5"))  return))
+        ((string=? "write" x) (let ((return "6"))  return))
+        (else return)
+        ))))
 (define expr-table
-  '(7 7 0 0 0 7 0 0 0 0 0 0))
+  (let ((return "ERROR"))
+    (lambda (x)
+      (cond
+        ((id? x) (let ((return "7"))  return))
+        ((integer? x) (let ((return "7"))  return))
+        ((string=? "(" x) (let ((return "7"))  return))
+        (else return)
+        ))))
 (define term_tail-table
-  '(9 0 9 9 0 0 9 8 8 0 0 9))
+  (let ((return "ERROR"))
+    (lambda (x)
+      (cond
+        ((id? x) (let ((return "9"))  return))
+        ((string=? "read" x) (let ((return "9"))  return))
+        ((string=? "write" x) (let ((return "9"))  return))
+        ((string=? ")" x) (let ((return "9"))  return))
+        ((string=? "+" x) (let ((return "8"))  return))
+        ((string=? "-" x) (let ((return "8"))  return))
+        ((string=? "$$" x) (let ((return "9"))  return))
+        (else return)
+        ))))
 (define term-table
-  '(10 10  0 0 0 10 0 0 0 0 0 0))
+  (let ((return "ERROR"))
+    (lambda (x)
+      (cond
+        ((id? x) (let ((return "10"))  return))
+        ((integer? x) (let ((return "10"))  return))
+        ((string=? "(" x) (let ((return "10"))  return))
+        (else return)
+        ))))
 (define factor_tail-table
-  '(12 0 12 12 0 0 12 12 12 11 11 12))
+  (let ((return "ERROR"))
+    (lambda (x)
+      (cond
+        ((id? x) (let ((return "12"))  return))
+        ((string=? "read" x) (let ((return "12"))  return))
+        ((string=? "write" x) (let ((return "12"))  return))
+        ((string=? ")" x) (let ((return "12"))  return))
+        ((string=? "+" x) (let ((return "12"))  return))
+        ((string=? "-" x) (let ((return "12"))  return))
+        ((string=? "*" x) (let ((return "11"))  return))
+        ((string=? "*" x) (let ((return "11"))  return))
+        ((string=? "/" x) (let ((return "11"))  return))
+        ((string=? "$$" x) (let ((return "12"))  return))
+        (else return)
+        ))))
 (define factor-table
-  '(14 15 0 0 0 13 0 0 0 0 0 0))
+  (let ((return "ERROR"))
+    (lambda (x)
+      (cond
+        ((id? x) (let ((return "14"))  return))
+        ((integer? x) (let ((return "15"))  return))
+        ((string=? "(" x) (let ((return "13"))  return))
+        (else return)
+        ))))
 (define add_op-table
-  '(0 0 0 0 0 0 0 16 17 0 0 0))
+  (let ((return "ERROR"))
+    (lambda (x)
+      (cond
+        ((string=? "+" x) (let ((return "16"))  return))
+        ((string=? "-" x) (let ((return "17"))  return))
+        (else return)
+        ))))
 (define mult_op-table
-  '(0 0 0 0 0 0 0 0 0 18 19 0))
-
-; 19 production rules. Input production ID. Output right side of ID# rule.
+  (let ((return "ERROR"))
+    (lambda (x)
+      (cond
+        ((string=? "*" x) (let ((return "18"))  return))
+        ((string=? "/" x) (let ((return "19"))  return))
+        (else return)
+        ))))
+; Define all 19 production rules:
+; Input production ID <--> Output right side of ID# rule
 (define production#-to-list
   (let ((result "ERROR"))
     (lambda (x)
@@ -71,9 +141,34 @@
         ((string=? "19" x) (let ((result '("/"))) result))
         (else result)
         ))))
-
-;;; Define token regonition
-
+; Print parse stack and input stream to associated out-files... return right side of  the production rule as a list
+(define (get_token_return parse-string input-string)
+  (write parse-string out_parse) (newline out_parse)
+  (write input-string out_stream) (newline out_stream)
+  (display "predict " out_comment)(write (program-table input-string) out_comment)(newline out_comment)
+  (cond
+    ( (string=? "program" parse-string)
+      (production#-to-list (program-table input-string)))
+    ( (string=? "stmt_list" parse-string)
+      (production#-to-list (stmt_list-table input-string)))
+    ( (string=? "stmt" parse-string)
+      (production#-to-list (stmt-table input-string)))
+    ( (string=? "expr" parse-string)
+      (production#-to-list (expr-table input-string)))
+    ( (string=? "term_tail" parse-string)
+      (production#-to-list (term_tail-table input-string)))
+    ( (string=? "term" parse-string)
+      (production#-to-list (term-table input-string)))
+    ( (string=? "factor_tail" parse-string)
+      (production#-to-list (factor_tail-table input-string)))
+    ( (string=? "factor" parse-string)
+      (production#-to-list (factor-table input-string)))
+    ( (string=? "add_op" parse-string)
+      (production#-to-list (add_op-table input-string)))
+    ( (string=? "mult_op" parse-string)
+      (production#-to-list (mult_op-table input-string)))
+    ))
+; PROBS NOT NEEDED
 (define initial-in-list
   (let ((infile (open-input-file "input1")))
     (let f ((x (read infile)))
@@ -83,7 +178,7 @@
             '())
           (cons x (f (read infile))))))
   )
-
+; Specify a filename in the working directory and convert to char list
 (define (file-to-char-list dir)
  (call-with-input-file dir
    (lambda (input-port)
@@ -91,7 +186,7 @@
        (cond
         ((eof-object? x) '())
         (#t (begin (cons x (recur (read-char input-port))))))))))
-
+; Converts char list to string list
 (define charlist->stringlist
       (lambda (ls)
         (cond
@@ -115,17 +210,38 @@
             (else ls)
             ))))
         ))
+; Define three output files for computation trace
+(define out_parse (open-output-file "parsestack" #:exists 'replace))
+(define out_stream (open-output-file "inputstream" #:exists 'replace))
+(define out_comment (open-output-file "comment" #:exists 'replace))
+
+; MAIN FUNC
+;(define (run parse_stack input_stack)
+;  (cond
+;    ( (equal? (car parse_stack) (car input_stack)) (parse_stack) )
+;    (else
+;     (let ((parsepush_Q (get_token_return (car input_stack) (car parse_stack)))) body)
+;    )))
 
 ;(charlist->stringlist initial-in-list)
-(charlist->stringlist (file-to-char-list "test"))
+;(charlist->stringlist (file-to-char-list "test"))
 "input1 below:"
 (charlist->stringlist (file-to-char-list "input1"))
-"input2 below:"
-(charlist->stringlist (file-to-char-list "input2"))
-"input3 below:"
-(charlist->stringlist (file-to-char-list "input3"))
+;;"input2 below:"
+;;(charlist->stringlist (file-to-char-list "input2"))
+;;"input3 below:"
+;;(charlist->stringlist (file-to-char-list "input3"))
 
 ;;;----------------------------------------------------------------  MAIN  --------------------------------------------------------------------------------------------
+(display "initial stack contents" out_comment)
+(newline out_comment)
+(run '("program") (charlist->stringlist (file-to-char-list "input1")))
+
+(get_token_return "program" "A")
+
+(close-output-port out_parse)
+(close-output-port out_stream)
+(close-output-port out_comment)
 
 ;; "program-table('read'):"
 ;; (program-table "read")
