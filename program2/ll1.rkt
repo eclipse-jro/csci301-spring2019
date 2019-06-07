@@ -26,7 +26,6 @@
         ((string=? "$$" x) (let ((return "1"))  return))
         (else return)
         ))))
-
 (define stmt_list-table
   '(2 0 2 2 0 0 0 0 0 0 0 3))
 (define stmt-table
@@ -100,11 +99,12 @@
           (else
         (let ((curchar (car ls)))
           (cond
-            ;( (equal? ls '()) (curchar) )
             ( (and (equal? curchar #\$) (equal? (car (cdr ls)) #\$)) (let ((result (string curchar (car(cdr ls)))))
                                                                          (cons result (charlist->stringlist (cdr(cdr ls)))) ))
             ( (and (equal? (car ls) #\r) (equal? (car (cdr ls)) #\e)) (let ((result (string (car ls) (car(cdr ls)) (car(cdr(cdr ls))) (car(cdr(cdr(cdr ls))))) ))
                                                                     (cons result (charlist->stringlist (cdr(cdr(cdr(cdr ls)))))) ) )
+            ( (and (equal? (car ls) #\w) (equal? (car (cdr ls)) #\r)) (let ((result (string (car ls) (car(cdr ls)) (car(cdr(cdr ls))) (car(cdr(cdr(cdr ls)))) (car(cdr(cdr(cdr(cdr ls)))))) ))
+                                                                    (cons result (charlist->stringlist (cdr(cdr(cdr(cdr(cdr ls))))))) ) )
             ( (and (equal? curchar #\:) (equal? (car (cdr ls)) #\=)) (let ((result (string curchar (car (cdr ls))) ) )
                                                                        (cons result (charlist->stringlist (cdr(cdr ls)))) ) )
             ( (or (equal? curchar #\space) (equal? curchar #\newline)) (charlist->stringlist (cdr ls)) )
@@ -112,15 +112,19 @@
             ( (or (or (or (equal? curchar #\+) (equal? curchar #\-)) (equal? curchar #\/)) (equal? curchar #\*)) (let ((result (string curchar)))
                                                                                                                    (cons result (charlist->stringlist (cdr ls))) ) )
             ( (integer? (char->integer curchar)) (cons (string curchar) (charlist->stringlist (cdr ls))) )
-            ;(else (let ((result "yeet")) result))
             (else ls)
             ))))
         ))
 
 ;(charlist->stringlist initial-in-list)
-
+(charlist->stringlist (file-to-char-list "test"))
+"input1 below:"
 (charlist->stringlist (file-to-char-list "input1"))
-;(car(file-to-char-list "test"))
+"input2 below:"
+(charlist->stringlist (file-to-char-list "input2"))
+"input3 below:"
+(charlist->stringlist (file-to-char-list "input3"))
+
 ;;;----------------------------------------------------------------  MAIN  --------------------------------------------------------------------------------------------
 
 ;; "program-table('read'):"
