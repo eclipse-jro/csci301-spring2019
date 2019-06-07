@@ -77,12 +77,12 @@
 
 (define initial-in-list
   (let ((infile (open-input-file "input1")))
-    (let f ((x (read-char infile)))
+    (let f ((x (read infile)))
       (if (eof-object? x)
           (begin
             (close-input-port infile)
             '())
-          (cons x (f (read-char infile))))))
+          (cons x (f (read infile))))))
   )
 
 (define (file-to-char-list dir)
@@ -93,23 +93,37 @@
         ((eof-object? x) '())
         (#t (begin (cons x (recur (read-char input-port))))))))))
 
-(define charlist->stringlist ls)
-  (cond
-    ((empty? ls) empty)
-    ((empty? (cdr ls)) ls)
-    (else
-     (let ((tmp (car ls)))
-       if (equal? tmp (#\r)
-                  (make-string 4 
-                   
-    
-    
+(define charlist->stringlist
+      (lambda (ls)
+        (cond
+          ( (null? ls) (let ((done ls)) ls) )
+          (else
+        (let ((curchar (car ls)))
+          (cond
+            ;( (equal? ls '()) (curchar) )
+            ( (and (equal? curchar #\$) (equal? (car (cdr ls)) #\$)) (let ((result (string curchar (car(cdr ls)))))
+                                                                         (cons result (charlist->stringlist (cdr(cdr ls)))) ))
+            ( (and (equal? (car ls) #\r) (equal? (car (cdr ls)) #\e)) (let ((result (string (car ls) (car(cdr ls)) (car(cdr(cdr ls))) (car(cdr(cdr(cdr ls))))) ))
+                                                                    (cons result (charlist->stringlist (cdr(cdr(cdr(cdr ls)))))) ) )
+            ( (and (equal? curchar #\:) (equal? (car (cdr ls)) #\=)) (let ((result (string curchar (car (cdr ls))) ) )
+                                                                       (cons result (charlist->stringlist (cdr(cdr ls)))) ) )
+            ( (or (equal? curchar #\space) (equal? curchar #\newline)) (charlist->stringlist (cdr ls)) )
+            ( (id? (string curchar)) (cons (string curchar) (charlist->stringlist (cdr ls))) )
+            ( (or (or (or (equal? curchar #\+) (equal? curchar #\-)) (equal? curchar #\/)) (equal? curchar #\*)) (let ((result (string curchar)))
+                                                                                                                   (cons result (charlist->stringlist (cdr ls))) ) )
+            ( (integer? (char->integer curchar)) (cons (string curchar) (charlist->stringlist (cdr ls))) )
+            ;(else (let ((result "yeet")) result))
+            (else ls)
+            ))))
+        ))
 
+;(charlist->stringlist initial-in-list)
+
+(charlist->stringlist (file-to-char-list "input1"))
+;(car(file-to-char-list "test"))
 ;;;----------------------------------------------------------------  MAIN  --------------------------------------------------------------------------------------------
 
 ;; "program-table('read'):"
 ;; (program-table "read")
 ;; "production#-to-list('1'):"
 ;; (production#-to-list "1")
-
-(file-to-char-list "test")
