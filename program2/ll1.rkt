@@ -241,11 +241,16 @@
 ;;; MAIN FUNCTION
 (define (run parse_stack input_stack)
   (cond
-    ( (equal? (car parse_stack) (car input_stack))
-      (parse_stack) )
-    (else
-     (let ((parsepush_Q (get_token_return (car input_stack) (car parse_stack)))) body)
-    )))
+    ((equal? (car parse_stack) "$$" ) (get_token_return "" "")) ; end state
+    ( (or (equal? (car parse_stack) (car input_stack)) (and (id? (car input_stack)) (equal? "id" (car parse_stack))) ) 
+      (let ((return-stack (cdr parse_stack) ))
+        (get_token_return (car parse_stack) (car input_stack))
+        (run return-stack (cdr input_stack) ) ))
+    ( (not (equal? (car parse_stack)(car input_stack)))
+      (let ((return-stack (append (get_token_return (car parse_stack) (car input_stack) ) (cdr parse_stack)) ))
+        (run return-stack input_stack ) ) )
+    (else "ERROR!!!!")
+    ))
 
 ;(charlist->stringlist initial-in-list)
 ;(charlist->stringlist (file-to-char-list "test"))
@@ -259,66 +264,10 @@
 ;;;----------------------------------------------------------------  MAIN  --------------------------------------------------------------------------------------------
 (display "initial stack contents" out_comment)
 (newline out_comment)
-;(run '("program") (charlist->stringlist (file-to-char-list "input1")))
+(run '("program") (charlist->stringlist (file-to-char-list "input1")))
 
-(get_token_return "program" "read")
-(get_token_return "stmt_list" "read")
-(get_token_return "stmt" "read")
-(get_token_return "read" "read")
-(get_token_return "id" "A")
+;(get_token_return "program" "read")
 
-(get_token_return "stmt_list" "read")
-(get_token_return "stmt" "read")
-(get_token_return "read" "read")
-(get_token_return "id" "B")
-(get_token_return "stmt_list" "C") ;;check this!!
-
-(get_token_return "stmt" "C")
-(get_token_return "id" "C")
-(get_token_return ":=" ":=")
-(get_token_return "term" "A")
-(get_token_return "factor" "A")
-
-(get_token_return "id" "A")
-(get_token_return "factor_tail" "+")
-(get_token_return "term_tail" "+")
-(get_token_return "add_op" "+")
-(get_token_return "+" "+")
-
-(get_token_return "term" "B")
-(get_token_return "factor" "B")
-(get_token_return "id" "B")
-(get_token_return "factor_tail" "write")
-(get_token_return "term_tail" "write")
-
-(get_token_return "stmt_list" "write")
-(get_token_return "stmt" "write")
-(get_token_return "write" "write")
-(get_token_return "expr" "C")
-(get_token_return "term" "C")
-
-(get_token_return "factor" "C")
-(get_token_return "factor_tail" "C")
-(get_token_return "term_tail" "C")
-(get_token_return "stmt_list" "C")
-(get_token_return "stmt" "C")
-
-(get_token_return "write" "write")
-(get_token_return "expr" "C")
-(get_token_return "term" "C")
-(get_token_return "factor" "C")
-(get_token_return "id" "C")
-
-(get_token_return "factor_tail" "/")
-(get_token_return "mult_op" "/")
-(get_token_return "/" "/")
-(get_token_return "factor" "2") ; gives error
-(get_token_return "number" "A")
-
-(get_token_return "factor_tail" "")
-(get_token_return "term_tail" "")
-(get_token_return "stmt_list" "")
-(get_token_return "$$" "")
 
 (close-output-port out_parse)
 (close-output-port out_stream)
