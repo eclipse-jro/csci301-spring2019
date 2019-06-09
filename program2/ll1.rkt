@@ -153,7 +153,7 @@
   (write parse-string out_parse) (newline out_parse)
   (write input-string out_stream) (newline out_stream)
   (cond
-    ( (or (string=? parse-string input-string) (id? input-string))
+    ( (or (string=? parse-string input-string) (and (id? input-string) (equal? "id" parse-string) ))
       (display "match " out_comment)(write input-string out_comment)(newline out_comment)
       '())
     ( (string=? "program" parse-string)
@@ -189,15 +189,15 @@
     ))
 
 ;;; PROBS NOT NEEDED
-(define initial-in-list
-  (let ((infile (open-input-file "input1")))
-    (let f ((x (read infile)))
-      (if (eof-object? x)
-          (begin
-            (close-input-port infile)
-            '())
-          (cons x (f (read infile))))))
-  )
+;(define initial-in-list
+;  (let ((infile (open-input-file "input1")))
+;    (let f ((x (read infile)))
+;      (if (eof-object? x)
+;          (begin
+;            (close-input-port infile)
+;            '())
+;          (cons x (f (read infile))))))
+;  )
 
 ;;; Specify a filename in the working directory and convert to char list
 (define (file-to-char-list dir)
