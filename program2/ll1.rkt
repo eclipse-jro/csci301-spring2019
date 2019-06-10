@@ -188,17 +188,6 @@
       (production#-to-list (mult_op-table input-string)))
     ))
 
-;;; PROBS NOT NEEDED
-;(define initial-in-list
-;  (let ((infile (open-input-file "input1")))
-;    (let f ((x (read infile)))
-;      (if (eof-object? x)
-;          (begin
-;            (close-input-port infile)
-;            '())
-;          (cons x (f (read infile))))))
-;  )
-
 ;;; Specify a filename in the working directory and convert to char list
 (define (file-to-char-list dir)
  (call-with-input-file dir
@@ -241,39 +230,30 @@
 ;;; MAIN FUNCTION
 (define (run parse_stack input_stack)
   (cond
-    ((equal? (car parse_stack) "$$" ) (get_token_return "" "")) ; end state
-    ( (or (equal? (car parse_stack) (car input_stack)) (and (id? (car input_stack)) (equal? "id" (car parse_stack))) ) 
+    ( (and (or (equal? "$$" (car parse_stack)) (null? parse_stack) (equal? "$$" (car input_stack)) ))
+      (close-output-port out_parse) (close-output-port out_stream) (close-output-port out_comment) );;;;;
+    ;((equal? (car parse_stack) "$$" ) (get_token_return "" "")) ; end state ; close ports
+    ( ( or (or (equal? (car parse_stack) (car input_stack)) (and (id? (car input_stack)) (equal? "id" (car parse_stack))) ) (and (equal? "number" (car parse_stack)) (integer? (string->number (car input_stack))) ) )
       (let ((return-stack (cdr parse_stack) ))
         (get_token_return (car parse_stack) (car input_stack))
         (run return-stack (cdr input_stack) ) ))
+
+
+    ( (and (not (equal? (car parse_stack)(car input_stack))) (equal? "" (car parse_stack)) )
+      (let ((return-stack (append (get_token_return (car (cdr parse_stack)) (car input_stack) ) (cdr (cdr parse_stack))) )) ; debug
+        ;; need to handle "" from factor_tail +
+        (run return-stack input_stack ) ) )
+    
     ( (not (equal? (car parse_stack)(car input_stack)))
       (let ((return-stack (append (get_token_return (car parse_stack) (car input_stack) ) (cdr parse_stack)) ))
+        ;; need to handle "" from factor_tail +
         (run return-stack input_stack ) ) )
     (else "ERROR!!!!")
     ))
 
-;(charlist->stringlist initial-in-list)
-;(charlist->stringlist (file-to-char-list "test"))
-;;;"input1 below:"
-;;;(charlist->stringlist (file-to-char-list "input1"))
-;;"input2 below:"
-;;(charlist->stringlist (file-to-char-list "input2"))
-;;"input3 below:"
-;;(charlist->stringlist (file-to-char-list "input3"))
+; ----------------------------------------------------------------------------------------------------------------------------------------------------------------
+; Main :
 
-;;;----------------------------------------------------------------  MAIN  --------------------------------------------------------------------------------------------
 (display "initial stack contents" out_comment)
 (newline out_comment)
-(run '("program") (charlist->stringlist (file-to-char-list "input1")))
-
-;(get_token_return "program" "read")
-
-
-(close-output-port out_parse)
-(close-output-port out_stream)
-(close-output-port out_comment)
-
-;; "program-table('read'):"
-;; (program-table "read")
-;; "production#-to-list('1'):"
-;; (production#-to-list "1")
+(run '("program") (charlist->stringlist (file-to-char-list "input")))
